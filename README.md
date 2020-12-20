@@ -6,6 +6,10 @@ Api queries:
 Get All:
 GET> http://localhost:8080/api/bikes
 
+
+Get By ID:
+GET> http://localhost:8080/api/bikes/2
+
 Create new:
 POST> http://localhost:8080/api/bikes
 (a raw json body)
@@ -26,5 +30,5 @@ PUT> http://localhost:8080/api/bikes
 }
 
 Delete entry by id:
-DELETE> 
+DELETE> http://localhost:8080/api/bikes/5
 
