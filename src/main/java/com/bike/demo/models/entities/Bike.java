@@ -12,6 +12,9 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 
 @Entity
 @Table(name="bike")
@@ -21,15 +24,22 @@ public class Bike implements Serializable {
 	 * this datatypes would be integer in the sqlite database, but will be
 	 * represent as its enum name when it been requested
 	 */
-	public enum Size {NOT_SET,XS,S,M,L,XL,XXL}
+	public enum BikeSize {NOT_SET,XS,S,M,L,XL,XXL}
 	public enum Type {NOT_SET,MTB,FIXIE,TRIATLHON,ROAD}
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
+	
+	@NotEmpty
+	@Size(min=4, max=20)
+	//unique doesn't work on sqlite, you have to do it manually
+	@Column(nullable=false, unique = true)
 	private String name;
+	@Column(nullable=false)
 	private Type type;
-	private Size size;
+	@Column(nullable=false)
+	private BikeSize size;
 	@Temporal(TemporalType.DATE)
 	@Column(name="created_at")
 	private Date createdAt;
@@ -72,13 +82,13 @@ public class Bike implements Serializable {
 
 
 
-	public Size getSize() {
+	public BikeSize getSize() {
 		return size;
 	}
 
 
 
-	public void setSize(Size size) {
+	public void setSize(BikeSize size) {
 		this.size = size;
 	}
 
