@@ -2,14 +2,12 @@ package com.bike.demo.models.services;
 
 import java.util.List;
 
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bike.demo.models.dao.IBikeDao;
-import com.bike.demo.models.entity.Bike;
+import com.bike.demo.models.entities.Bike;
 
 @Service
 public class BikeServiceImplemented implements IBikeService{
@@ -38,5 +36,4 @@ public class BikeServiceImplemented implements IBikeService{
 	public void delete(Long id) {
 		bikeDao.deleteById(id);
 	}
-
 }

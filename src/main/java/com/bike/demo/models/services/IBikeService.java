@@ -2,7 +2,7 @@ package com.bike.demo.models.services;
 
 import java.util.List;
 
-import com.bike.demo.models.entity.Bike;
+import com.bike.demo.models.entities.Bike;
 
 /*
  * here we define our services that will be implemented in a class

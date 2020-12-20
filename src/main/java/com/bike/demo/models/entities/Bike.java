@@ -1,4 +1,4 @@
-package com.bike.demo.models.entity;
+package com.bike.demo.models.entities;
 
 import java.io.Serializable;
 import java.util.Date;

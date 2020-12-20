@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bike.demo.models.entity.Bike;
+import com.bike.demo.models.entities.Bike;
 import com.bike.demo.models.services.IBikeService;
 
 @RestController
