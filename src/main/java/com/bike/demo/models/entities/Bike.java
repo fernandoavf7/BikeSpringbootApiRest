@@ -31,9 +31,9 @@ public class Bike implements Serializable {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
+	//unique doesn't work on sqlite, you have to do it manually
 	@NotEmpty
 	@Size(min=4, max=20)
-	//unique doesn't work on sqlite, you have to do it manually
 	@Column(nullable=false, unique = true)
 	private String name;
 	@Column(nullable=false)

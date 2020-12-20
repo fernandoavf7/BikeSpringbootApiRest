@@ -1,13 +1,18 @@
 package com.bike.demo.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -65,9 +70,18 @@ public class BikeRestController {
 	 * example json sent: {"name": "Ballistic DH","size": "S","type": "MTB"}
 	 */
 	@PostMapping("/bikes")
-	public ResponseEntity<?> create(@RequestBody Bike bike) {
+	public ResponseEntity<?> create(@Valid @RequestBody Bike bike, BindingResult result) {
 		Map<String, Object> response = new HashMap<>();
 		Bike bikeNew = null;
+
+		if (result.hasErrors()) {
+			List<String> errors = new ArrayList<>();
+			for (FieldError err : result.getFieldErrors()) {
+				errors.add("the camp '" + err.getField() + "' " + err.getDefaultMessage());
+			}
+			response.put("errors", errors);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+		}
 
 		try {
 			bikeNew = bikeService.save(bike);
