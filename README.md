@@ -1,5 +1,5 @@
 # BikeSpringbootApiRest
-An example api rest created with springboot
+An example api rest created with springboot and SQLite portable database, you only need to download, get dependencies and start the proyect
 
 Api queries:
 
