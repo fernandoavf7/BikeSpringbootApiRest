@@ -1,0 +1,12 @@
+-------------------------------------------------------------------------------
+Test set: com.bike.demo.BikeSpringbootApirestApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 9.317 s <<< FAILURE! - in com.bike.demo.BikeSpringbootApirestApplicationTests
+contextLoads  Time elapsed: 0.028 s  <<< ERROR!
+java.lang.IllegalStateException: Failed to load ApplicationContext
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Invocation of init method failed; nested exception is org.hibernate.service.spi.ServiceException: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment]
+Caused by: org.hibernate.service.spi.ServiceException: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment]
+Caused by: org.hibernate.boot.registry.selector.spi.StrategySelectionException: Unable to resolve name [com.springboot.sqlite.SQLDialect] as strategy [org.hibernate.dialect.Dialect]
+Caused by: org.hibernate.boot.registry.classloading.spi.ClassLoadingException: Unable to load class [com.springboot.sqlite.SQLDialect]
+Caused by: java.lang.ClassNotFoundException: Could not load requested class : com.springboot.sqlite.SQLDialect
+
