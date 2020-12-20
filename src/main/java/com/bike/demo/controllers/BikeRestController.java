@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,6 +36,10 @@ public class BikeRestController {
 		return bikeService.findById(id);
 	}
 	
+	/*
+	 * example json sent:
+	 * {"name": "Ballistic DH","size": "S","type": "MTB"}
+	 */
 	@PostMapping("/bikes")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Bike create(@RequestBody Bike bike) {
@@ -45,10 +50,10 @@ public class BikeRestController {
 	 * example json sent:
 	 * {"name": "Ballistic DH","size": "S","type": "MTB"}
 	 */
-	@PutMapping("/bikes/{id}")
+	@PutMapping("/bikes")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Bike update(@RequestBody Bike bike, @PathVariable Long id) {
-		Bike currentBike = bikeService.findById(id);
+	public Bike update(@RequestBody Bike bike) {
+		Bike currentBike = bikeService.findById(bike.getId());
 		
 		currentBike.setName(bike.getName());
 		currentBike.setSize(bike.getSize());
@@ -59,7 +64,7 @@ public class BikeRestController {
 	
 	@DeleteMapping("/bikes/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void delete(@PathVariable Long id) {
+	public @ResponseBody void delete(@PathVariable Long id) {
 		bikeService.delete(id);
 	}
 }
