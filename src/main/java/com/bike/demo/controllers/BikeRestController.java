@@ -48,7 +48,7 @@ public class BikeRestController {
 	
 	/*
 	 * example json sent:
-	 * {"name": "Ballistic DH","size": "S","type": "MTB"}
+	 * {"name": "id": 3, "Ballistic DH","size": "S","type": "MTB"}
 	 */
 	@PutMapping("/bikes")
 	@ResponseStatus(HttpStatus.CREATED)
