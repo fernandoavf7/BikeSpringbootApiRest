@@ -15,9 +15,12 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import org.springframework.validation.annotation.Validated;
+
 
 @Entity
 @Table(name="bike")
+@Validated
 public class Bike implements Serializable {
 	
 	/*
@@ -36,75 +39,56 @@ public class Bike implements Serializable {
 	@Size(min=4, max=20)
 	@Column(nullable=false, unique = true)
 	private String name;
+	
 	@Column(nullable=false)
 	private Type type;
+	
 	@Column(nullable=false)
 	private BikeSize size;
+	
 	@Temporal(TemporalType.DATE)
 	@Column(name="created_at")
 	private Date createdAt;
-	
-	
 	
 	public Long getId() {
 		return id;
 	}
 
-
-
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-
 
 	public String getName() {
 		return name;
 	}
 
-
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
-
 
 	public Type getType() {
 		return type;
 	}
 
-
-
 	public void setType(Type type) {
 		this.type = type;
 	}
-
-
 
 	public BikeSize getSize() {
 		return size;
 	}
 
-
-
 	public void setSize(BikeSize size) {
 		this.size = size;
 	}
-
-
 
 	public Date getCreatedAt() {
 		return createdAt;
 	}
 
-
-
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
-
-
 
 	@PrePersist
 	public void prePersist() {
