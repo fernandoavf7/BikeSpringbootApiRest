@@ -12,15 +12,12 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
 
 
 @Entity
 @Table(name="bike")
-@Validated
 public class Bike implements Serializable {
 	
 	/*
@@ -35,8 +32,6 @@ public class Bike implements Serializable {
 	private Long id;
 	
 	//unique doesn't work on sqlite, you have to do it manually
-	@NotEmpty
-	@Size(min=4, max=20)
 	@Column(nullable=false, unique = true)
 	private String name;
 	
