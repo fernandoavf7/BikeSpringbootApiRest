@@ -2,6 +2,8 @@ package com.bike.demo.models.services;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
+
 import com.bike.demo.models.entities.Bike;
 
 /*
@@ -12,6 +14,8 @@ public interface IBikeService {
 	public List<Bike> findAll();
 	
 	public Bike findById(Long id);
+	
+	public Bike findByName(String name);
 	
 	public Bike save(Bike bike);
 	

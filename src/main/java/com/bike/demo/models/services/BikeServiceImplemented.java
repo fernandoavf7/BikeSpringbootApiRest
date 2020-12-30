@@ -10,30 +10,39 @@ import com.bike.demo.models.dao.IBikeDao;
 import com.bike.demo.models.entities.Bike;
 
 @Service
-public class BikeServiceImplemented implements IBikeService{
+public class BikeServiceImplemented implements IBikeService {
 
 	@Autowired
 	private IBikeDao bikeDao;
+
 	@Override
-	//(crudRepository have their methods transactionals)
+	// (crudRepository have their methods transactionals)
 	@Transactional(readOnly = true)
 	public List<Bike> findAll() {
-		return (List<Bike>)bikeDao.findAll();
+		return (List<Bike>) bikeDao.findAll();
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public Bike findById(Long id) {
 		return bikeDao.findById(id).orElse(null);
 	}
+
 	@Override
 	@Transactional
 	public Bike save(Bike bike) {
 		return bikeDao.save(bike);
 	}
+
 	@Override
 	@Transactional
 	public void delete(Long id) {
 		bikeDao.deleteById(id);
 	}
+
+	@Override
+	public Bike findByName(String name) {
+		return bikeDao.findByName(name);
+	}
+
 }

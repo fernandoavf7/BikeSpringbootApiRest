@@ -1,9 +1,11 @@
 package com.bike.demo.controllers;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -12,7 +14,9 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,13 +30,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bike.demo.models.entities.Bike;
 import com.bike.demo.models.services.IBikeService;
+import com.bike.demo.response.CommonResponse;
 
 @RestController
 @RequestMapping("/api")
 public class BikeRestController {
 
 	@Autowired
-	// service get the first implementation that it found
+	// service get by default the first implementation that it found
 	private IBikeService bikeService;
 
 	/*
@@ -44,7 +49,8 @@ public class BikeRestController {
 	}
 
 	/*
-	 * http://localhost:8080/api/bikes/6
+	 * http://localhost:8080/api/bikes/6 this response a custom Map created at
+	 * moment
 	 */
 	@GetMapping("bikes/{id}")
 	public ResponseEntity<?> show(@PathVariable Long id) {
@@ -67,32 +73,48 @@ public class BikeRestController {
 	}
 
 	/*
-	 * example json sent: {"name": "Ballistic DH","size": "S","type": "MTB"}
+	 * example json sent: {"name": "Ballistic DH","size": "S","type": "MTB"} This
+	 * returns a predefined Object specifically created to response a request
 	 */
 	@PostMapping("/bikes")
-	public ResponseEntity<?> create(@Valid @RequestBody Bike bike, BindingResult result) {
-		Map<String, Object> response = new HashMap<>();
-		Bike bikeNew = null;
+	public ResponseEntity<CommonResponse> create(@Valid @RequestBody Bike bike, Errors errors) {
 
-		if (result.hasErrors()) {
-			List<String> errors = new ArrayList<>();
-			for (FieldError err : result.getFieldErrors()) {
-				errors.add("the camp '" + err.getField() + "' " + err.getDefaultMessage());
-			}
-			response.put("errors", errors);
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+		CommonResponse response = new CommonResponse();
+		ResponseEntity<CommonResponse> responseEntity = null;
+		Bike newBike = null;
+
+		if (errors.hasErrors()) {
+			response.setCode(String.valueOf(HttpStatus.BAD_REQUEST.value()));
+			response.setMessage(String.join(",",
+					errors.getAllErrors().stream().map(err -> err.getDefaultMessage()).collect(Collectors.toList())));
+			responseEntity = ResponseEntity.badRequest().body(response);
+			return responseEntity;
+		}
+
+		Bike oldBike = bikeService.findByName(bike.getName());
+		if (oldBike != null) {
+			response.setCode(String.valueOf(HttpStatus.BAD_REQUEST.value()));
+			response.setMessage("Name already exists in database");
+			response.setObjResponse(oldBike);
+			responseEntity = ResponseEntity.badRequest().body(response);
+			return responseEntity;
 		}
 
 		try {
-			bikeNew = bikeService.save(bike);
+			newBike = bikeService.save(bike);
 		} catch (DataAccessException e) {
-			response.put("message", "Error to do insert in the database.");
-			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			response.setCode(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+			response.setMessage(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+			responseEntity = ResponseEntity.badRequest().body(response);
+			return responseEntity;
 		}
-		response.put("message", "Bike was created successfully.");
-		response.put("bike", bikeNew);
-		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+
+		response.setCode(String.valueOf(HttpStatus.CREATED.value()));
+		response.setMessage("Bike created successfully");
+		response.setObjResponse(newBike);
+		responseEntity = ResponseEntity.ok().body(response);
+		return responseEntity;
+
 	}
 
 	/*
@@ -101,35 +123,56 @@ public class BikeRestController {
 	 */
 	@PutMapping("/bikes")
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<?> update(@RequestBody Bike bike) {
+	public ResponseEntity<CommonResponse> update(@Valid @RequestBody Bike bike, Errors errors) {
 
 		Bike currentBike = bikeService.findById(bike.getId());
-
 		Bike updatedBike = null;
-		Map<String, Object> response = new HashMap<>();
+
+		CommonResponse response = new CommonResponse();
+		ResponseEntity<CommonResponse> responseEntity = null;
+
+		if (errors.hasErrors()) {
+			response.setCode(String.valueOf(HttpStatus.BAD_REQUEST.value()));
+			response.setMessage(String.join(",",
+					errors.getAllErrors().stream().map(err -> err.getDefaultMessage()).collect(Collectors.toList())));
+			responseEntity = ResponseEntity.badRequest().body(response);
+			return responseEntity;
+		}
+
+		Bike oldBike = bikeService.findByName(bike.getName());
+
+		if (oldBike != null) {
+			response.setCode(String.valueOf(HttpStatus.BAD_REQUEST.value()));
+			response.setMessage("Name already exists in database");
+			responseEntity = ResponseEntity.badRequest().body(response);
+			return responseEntity;
+		}
 
 		if (currentBike == null) {
-			response.put("message", "Error: problem trying to edit bike with ID "
-					.concat(bike.getId().toString().concat("does't exist on the database")));
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+			response.setCode(String.valueOf(HttpStatus.NOT_FOUND.value()));
+			response.setMessage("Error: problem trying to edit bike with ID: "
+					.concat(bike.getId().toString().concat(" does't exist on the database")));
+			responseEntity = ResponseEntity.badRequest().body(response);
+			return responseEntity;
 		}
 
 		try {
 			currentBike.setName(bike.getName());
 			currentBike.setSize(bike.getSize());
 			currentBike.setType(bike.getType());
-
 			updatedBike = bikeService.save(currentBike);
 		} catch (DataAccessException e) {
-			response.put("message", "Error to do insert in the database.");
-			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			response.setCode(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+			response.setMessage(e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+			responseEntity = ResponseEntity.badRequest().body(response);
+			return responseEntity;
 		}
 
-		response.put("message", "Bike was updated successfully.");
-		response.put("bike", updatedBike);
-
-		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+		response.setCode(String.valueOf(HttpStatus.OK.value()));
+		response.setMessage("Bike id: " + updatedBike.getId() + " updated");
+		response.setObjResponse(updatedBike);
+		responseEntity = ResponseEntity.ok().body(response);
+		return responseEntity;
 	}
 
 	/*
@@ -137,20 +180,24 @@ public class BikeRestController {
 	 */
 	@DeleteMapping("/bikes/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public ResponseEntity<?> delete(@PathVariable Long id) {
-		Map<String, Object> response = new HashMap<>();
+	public ResponseEntity<CommonResponse> delete(@PathVariable Long id) {
+		CommonResponse response = new CommonResponse();
+		ResponseEntity<CommonResponse> responseEntity = null;
 
 		try {
 			bikeService.delete(id);
 		} catch (DataAccessException e) {
-			response.put("message", "Error to delete bike in the database.");
-			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			response.setCode(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+			response.setMessage("Error to delete bike in the database. "
+					+ e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+			responseEntity = ResponseEntity.badRequest().body(response);
+			return responseEntity;
 		}
 
-		response.put("message", "Bike was deleted successfully.");
-
-		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-
+		response.setCode(String.valueOf(HttpStatus.OK.value()));
+		response.setMessage("Bike deleted successfully");
+		response.setObjResponse(null);
+		responseEntity = ResponseEntity.ok().body(response);
+		return responseEntity;
 	}
 }
