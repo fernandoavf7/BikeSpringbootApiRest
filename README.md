@@ -1,12 +1,6 @@
 # BikeSpringbootApiRest
 An example api rest created with springboot and SQLite portable database, you only need to download, get dependencies and start the proyect
-* you can uncomment application.properties lines for MySQL database too
-
-Used Tools:
-- JpaRepository
-- CrudRepository
-
-
+* you can uncomment application.properties lines for set MySQL database too
 
 
 Api queries:
