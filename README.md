@@ -1,5 +1,13 @@
 # BikeSpringbootApiRest
 An example api rest created with springboot and SQLite portable database, you only need to download, get dependencies and start the proyect
+* you can uncomment application.properties lines for MySQL database too
+
+Used Tools:
+- JpaRepository
+- CrudRepository
+
+
+
 
 Api queries:
 
@@ -16,7 +24,8 @@ POST> http://localhost:8080/api/bikes
 {
     "name": "Trek Rampage",
     "size": "XL",
-    "type": "MTB"
+    "type": "MTB",
+    "mailBrand": "brandbike@mail.com"
 }
 
 Update entry by id:
@@ -26,7 +35,8 @@ PUT> http://localhost:8080/api/bikes
     "id": 4,
     "name": "Trek crossroad",
     "size": "M",
-    "type": "ROAD"
+    "type": "ROAD",
+    "mailBrand": "brandbike@mail.com"
 }
 
 Delete entry by id:
