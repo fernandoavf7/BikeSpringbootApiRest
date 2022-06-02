@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bike.demo.exceptions.BikeApiException;
 import com.bike.demo.models.entities.Bike;
 import com.bike.demo.models.services.IBikeService;
 import com.bike.demo.response.CommonResponse;
+
 
 @RestController
 @RequestMapping("/api")
@@ -194,4 +196,10 @@ public class BikeRestController {
 		responseEntity = ResponseEntity.ok().body(response);
 		return responseEntity;
 	}
+
+	@GetMapping("/bikes/error")
+	public ResponseEntity<com.bike.demo.pojo.CommonResponse> throwBikeError() throws BikeApiException {
+		throw new BikeApiException("this is an error test");
+	}
+
 }
